@@ -14,11 +14,17 @@ function isRunningStandalone(): boolean {
   );
 }
 
+function isIos(): boolean {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+
 /**
  * Shown from first visit until dismissed. On Android Chrome we can capture
- * the native install prompt and trigger it directly; everywhere else (e.g.
- * iOS Safari, which has no beforeinstallprompt) we fall back to plain
- * instructions.
+ * the native install prompt and trigger it directly. iOS Safari has no
+ * beforeinstallprompt at all — and its install flow (Share icon → Add to
+ * Home Screen) is different enough from desktop/Android's menu-based flow
+ * that showing the wrong instructions is actively confusing, so it gets its
+ * own copy rather than a generic fallback.
  */
 export function InstallHint() {
   const [dismissed, setDismissed] = useState(() => localStorage.getItem(DISMISSED_KEY) === '1');
@@ -64,7 +70,9 @@ export function InstallHint() {
       <span className="flex-1">
         {installEvent
           ? 'Add Calendar to your Home Screen for quick, full-screen, offline access.'
-          : 'For quick, full-screen, offline access, add Calendar to your Home Screen from your browser menu (⋮ → Add to Home Screen).'}
+          : isIos()
+            ? 'For quick, full-screen, offline access: open this in Safari, tap the Share icon, then "Add to Home Screen".'
+            : 'For quick, full-screen, offline access, add Calendar to your Home Screen from your browser menu (⋮ → Add to Home Screen).'}
       </span>
       <div className="flex shrink-0 flex-col items-end gap-1">
         {installEvent && (
