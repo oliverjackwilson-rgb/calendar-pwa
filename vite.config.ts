@@ -5,6 +5,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Served at https://<user>.github.io/calendar-pwa/ — every root-absolute
+  // asset path needs this prefix, not just "/".
+  base: '/calendar-pwa/',
   plugins: [
     react(),
     tailwindcss(),
@@ -19,7 +22,8 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: '/calendar-pwa/',
+        scope: '/calendar-pwa/',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -50,7 +54,7 @@ export default defineConfig({
         // Every same-origin navigation (including a hard reload while
         // offline) resolves to the cached shell — this is a single-page
         // app with no server-rendered routes to fall back to.
-        navigateFallback: '/index.html',
+        navigateFallback: '/calendar-pwa/index.html',
       },
     }),
   ],
